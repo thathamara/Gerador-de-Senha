@@ -1,26 +1,36 @@
-import { Image,Text,View, StyleSheet,TouchableOpacity, Platform } from 'react-native';
+import { Image,Text,View, StyleSheet,TouchableOpacity,Modal, Platform } from 'react-native';
 import Slider from '@react-native-community/slider'
 import {useState} from 'react'
+import{ModalPassword} from '../assets/componentes/modal/index'
 
 let charset="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 
 export default function HomeScreen() {
   const [size,setSize]=useState(10)//size e o valor inicial,setSize valor final "dinamico" e oq passa atraves da propriedade value e onchangeValue no componente qe eu quero,que tambem esta atrelado as propriedades max e min
+  const [passwordValue,setPasswordValue]= useState("")
+  const [modalVisible,setModalVisible]=useState(false)
   function geradorSenha(){
+
     let password ="";
+
     for(let i=0,n=charset.length; i<=size; i++){
       password+= charset.charAt(Math.floor(Math.random()*n)) //floor:gera  numero inteiro,random:numero aleatorio
     }
-    console.log(`Sua senha é: ${password}`);
+
+    setPasswordValue(password)
+    setModalVisible(true)
   }
 
   return (
     <View style={styles.container}>
+
       <Image 
       source={require("../../app/assets/logo.png")}
       style={styles.logo}
        />
+
        <Text style={styles.title}>{size} caracters</Text> 
+       
        <View style={styles.area}>
         <Slider style={{height:50}}
         minimumValue={6}
@@ -32,9 +42,15 @@ export default function HomeScreen() {
         onValueChange={(value)=>setSize(Math.round(value))}
         />
        </View>
+
        <TouchableOpacity style={styles.button} onPress={geradorSenha}>
         <Text style={styles.buttonText}>Gerar senha</Text>
        </TouchableOpacity>
+
+       <Modal visible={modalVisible} animationType='fade' transparent={true} >
+        <ModalPassword password={passwordValue} handleClose={()=> setModalVisible(false)}/>
+       </Modal>
+
     </View>
   );
 }
